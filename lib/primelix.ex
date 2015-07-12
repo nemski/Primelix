@@ -5,35 +5,14 @@ defmodule Primelix do
     primes |> Enum.map(&IO.puts(&1))
   end
 
-  def recurse_prime(x, primes, max) do
-    if x > max do
-      primes
-    else
-      if is_prime(x, primes) do
-        recurse_prime(x + 2, primes ++ [x], max)
-      else
-        recurse_prime(x + 2, primes, max)
-      end
-    end
+  def recurse_prime(x, starting_primes, max) when rem(x, 2) == 1 do
+    odd_numbers = Enum.filter(x..max, fn(x) -> rem(x, 2) == 1 end)
+    Enum.reduce(odd_numbers, starting_primes, fn(x, primes) ->
+      if is_prime(x, primes), do: primes ++ [x], else: primes
+    end)
   end
 
-  def is_prime(x, primes) do
-    if divisible_by(x, primes) do
-      false
-    else
-      true
-    end
-  end
-
-  def divisible_by(x, list) when length(list) >= 1 do
-    if rem(x, hd(list)) == 0 do 
-      true
-    else
-      divisible_by(x, tl(list))
-    end
-  end
-
-  def divisible_by(x, list) do
-    false
-  end
+  def is_prime(x, []), do: true
+  def is_prime(x, [h|_]) when rem(x, h) == 0, do: false
+  def is_prime(x, [_|t]), do: is_prime(x, t)
 end
