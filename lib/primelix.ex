@@ -1,39 +1,26 @@
 defmodule Primelix do
   def main(args) do
     {max, _} = Integer.parse(hd(args))
-    primes = recurse_prime(3, [2], max)
-    primes |> Enum.map(&IO.puts(&1))
+    primes_up_to(3, [2], max)
+    |> Enum.map(&IO.puts(&1))
   end
 
-  def recurse_prime(x, primes, max) do
-    if x > max do
-      primes
-    else
-      if is_prime(x, primes) do
-        recurse_prime(x + 2, primes ++ [x], max)
-      else
-        recurse_prime(x + 2, primes, max)
-      end
+  def primes_up_to(x, primes, max) when max < 2, do: []
+
+  def primes_up_to(x, primes, max) when x > max, do: primes
+
+  def primes_up_to(x, primes, max) do
+    unless divisible_by_any?(x, primes) do
+      primes = primes ++ [x]
     end
+    primes_up_to(x + 2, primes, max)
   end
 
   def is_prime(x, primes) do
-    if divisible_by(x, primes) do
-      false
-    else
-      true
-    end
+    !divisible_by_any?(x, primes)
   end
 
-  def divisible_by(x, list) when length(list) >= 1 do
-    if rem(x, hd(list)) == 0 do 
-      true
-    else
-      divisible_by(x, tl(list))
-    end
-  end
-
-  def divisible_by(x, list) do
-    false
+  def divisible_by_any?(x, ints) do
+    Enum.any?( ints, &(rem(x,&1)==0) )
   end
 end
